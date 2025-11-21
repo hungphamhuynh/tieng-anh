@@ -1374,49 +1374,6 @@
     </script>
 
 
-	<button class="show-answers-btn" onclick="showAllAnswers()">Xem Tất Cả Đáp Án Đúng</button>
-<div id="all-answers" style="display: none; background: #f0f8ff; padding: 20px; border-radius: 8px; margin-top: 20px;">
-    <h3>📋 Tất Cả Đáp Án Đúng Để Học Tập:</h3>
-    <div id="answers-list"></div>
-</div>
-
-<script>
-function showAllAnswers() {
-    const answersList = document.getElementById('answers-list');
-    const answersDiv = document.getElementById('all-answers');
-    
-    if (answersDiv.style.display === 'none') {
-        answersList.innerHTML = '';
-        
-        // Hiển thị tất cả đáp án đúng
-        for (let question in answerKey) {
-            const questionElement = document.querySelector(`input[name="${question}"]`).closest('.question');
-            const questionText = questionElement.querySelector('.question-text').textContent;
-            const correctAnswer = answerKey[question];
-            
-            // Lấy text của đáp án đúng
-            const correctOption = questionElement.querySelector(`input[value="${correctAnswer}"]`);
-            const correctAnswerText = correctOption ? correctOption.nextElementSibling.textContent.trim() : correctAnswer;
-            
-            const answerItem = document.createElement('div');
-            answerItem.style.marginBottom = '15px';
-            answerItem.style.padding = '10px';
-            answerItem.style.backgroundColor = '#e8f5e9';
-            answerItem.style.borderRadius = '5px';
-            answerItem.innerHTML = `
-                <div><strong>${questionText}</strong></div>
-                <div style="color: #27ae60; font-weight: bold;">✅ Đáp án đúng: ${correctAnswerText}</div>
-            `;
-            answersList.appendChild(answerItem);
-        }
-        
-        answersDiv.style.display = 'block';
-    } else {
-        answersDiv.style.display = 'none';
-    }
-}
-</script>
-
 </body>
 
 </html>
