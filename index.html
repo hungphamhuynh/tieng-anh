@@ -1861,47 +1861,63 @@
         ];
 
         let currentQuestionIndex = 0;
+        let remainingQuestions = [...questions];
 
         function shuffleArray(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
         function showQuestion() {
-            const q = questions[currentQuestionIndex];
-            document.getElementById('question').innerHTML = `
+                if (remainingQuestions.length === 0) {
+                    document.getElementById('question').textContent = "Bạn đã hoàn thành tất cả các câu hỏi!";
+                    document.getElementById('answers').innerHTML = '';
+                    return;
+                }
+
+                // Random câu hỏi
+                const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+                const q = remainingQuestions[randomIndex];
+
+                // Hiển thị câu hỏi
+                document.getElementById('question').innerHTML = `
         <strong>Câu ${q.number} (${q.point} Điểm)</strong><br>
         ${q.question}
     `;
-            const shuffledOptions = shuffleArray([...q.options]);
-            const answersDiv = document.getElementById('answers');
-            answersDiv.innerHTML = '';
 
-            shuffledOptions.forEach(option => {
-                const btn = document.createElement('button');
-                btn.textContent = option;
-                btn.className = 'answer';
-                btn.onclick = () => checkAnswer(option, q.correct, q);
-                answersDiv.appendChild(btn);
-            });
+                // Hiển thị đáp án
+                const shuffledOptions = shuffleArray([...q.options]);
+                const answersDiv = document.getElementById('answers');
+                answersDiv.innerHTML = '';
 
-            document.getElementById('result').textContent = '';
-        }
+                shuffledOptions.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.textContent = option;
+                    btn.className = 'answer';
+                    btn.onclick = () => checkAnswer(option, q.correct, q, randomIndex);
+                    answersDiv.appendChild(btn);
+                });
 
-        function checkAnswer(selected, correct, q) {
-            const buttons = document.querySelectorAll('.answer');
-            buttons.forEach(btn => {
-                if (btn.textContent === correct) btn.classList.add('correct');
-                if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
-                btn.disabled = true;
-            });
-
-            const result = document.getElementById('result');
-            if (selected === correct) {
-                result.textContent = `Chính xác! ✅ Đây là ${q.exam}, ${q.point} điểm.`;
-            } else {
-                result.textContent = `Sai ❌. Đáp án đúng là: ${correct}. Đây là ${q.exam}, ${q.point} điểm.`;
+                document.getElementById('result').textContent = '';
             }
-        }
+
+        function checkAnswer(selected, correct, q, indexInRemaining) {
+                const buttons = document.querySelectorAll('.answer');
+                buttons.forEach(btn => {
+                    if (btn.textContent === correct) btn.classList.add('correct');
+                    if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
+                    btn.disabled = true;
+                });
+
+                const result = document.getElementById('result');
+                if (selected === correct) {
+                    result.textContent = `Chính xác! ✅ Đây là ${q.exam}, ${q.point} điểm.`;
+                } else {
+                    result.textContent = `Sai ❌. Đáp án đúng là: ${correct}. Đây là ${q.exam}, ${q.point} điểm.`;
+                }
+
+                // Xoá câu hỏi đã làm khỏi remainingQuestions
+                remainingQuestions.splice(indexInRemaining, 1);
+            }
 
         // Hiển thị câu đầu tiên
         showQuestion();
