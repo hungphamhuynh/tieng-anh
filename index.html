@@ -7,37 +7,97 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        #quiz-container {
+            background: white;
+            width: 500px;
+            margin-top: 50px;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #question {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
         .answer {
-            display: block;
+            width: 100%;
+            padding: 12px;
             margin: 8px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            padding: 5px;
-            border: 1px solid #ccc;
-            width: fit-content;
+            background: #f1f1f1;
+            transition: 0.25s;
+        }
+
+        .answer:hover {
+            background: #e2e2e2;
+            transform: scale(1.02);
         }
 
         .correct {
-            background-color: #c8f7c5;
+            background: #1cc88a !important;
+            color: white;
         }
 
         .wrong {
-            background-color: #f7c5c5;
+            background: #e74a3b !important;
+            color: white;
         }
 
-        .question {
-            margin-bottom: 15px;
+        #result {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #next-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            font-size: 17px;
+            border: none;
+            border-radius: 12px;
+            background: #4e73df;
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        #next-btn:hover {
+            background: #2e59d9;
+            transform: scale(1.02);
         }
     </style>
 </head>
 
 <body>
 
-    <h2 id="question">Câu hỏi sẽ hiển thị ở đây</h2>
-    <div id="answers"></div>
-    <p id="result"></p>
+    <div id="quiz-container">
+        <div id="question"></div>
+        <div id="answers"></div>
+        <div id="result"></div>
+        <button id="next-btn">Câu tiếp theo</button>
+    </div>
 
     <script>
         // Danh sách câu hỏi, chỉ có tiếng Anh
@@ -1394,7 +1454,7 @@
                 options: ["In front of the square", "On the left of the square", "Behind the square"],
                 correct: "On the left of the square"
             },
-             {
+            {
                 exam: "Đề 14",
                 number: 1,
                 point: 1,
@@ -1498,7 +1558,7 @@
                 options: ["The Wifi", "The computer", "The printer"],
                 correct: "The computer"
             },
-             {
+            {
                 exam: "Đề 15",
                 number: 1,
                 point: 1,
@@ -1868,68 +1928,62 @@
         }
 
         function showQuestion() {
-                if (remainingQuestions.length === 0) {
-                    document.getElementById('question').textContent = "Bạn đã hoàn thành tất cả các câu hỏi!";
-                    document.getElementById('answers').innerHTML = '';
-                    return;
-                }
+            if (remainingQuestions.length === 0) {
+                document.getElementById('question').textContent = "Bạn đã hoàn thành tất cả các câu hỏi!";
+                document.getElementById('answers').innerHTML = '';
+                return;
+            }
 
-                // Random câu hỏi
-                const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
-                const q = remainingQuestions[randomIndex];
+            // Random câu hỏi
+            const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+            const q = remainingQuestions[randomIndex];
 
-                // Hiển thị câu hỏi
-                document.getElementById('question').innerHTML = `
+            // Hiển thị câu hỏi
+            document.getElementById('question').innerHTML = `
         <strong>Câu ${q.number} (${q.point} Điểm)</strong><br>
         ${q.question}
     `;
 
-                // Hiển thị đáp án
-                const shuffledOptions = shuffleArray([...q.options]);
-                const answersDiv = document.getElementById('answers');
-                answersDiv.innerHTML = '';
+            // Hiển thị đáp án
+            const shuffledOptions = shuffleArray([...q.options]);
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
 
-                shuffledOptions.forEach(option => {
-                    const btn = document.createElement('button');
-                    btn.textContent = option;
-                    btn.className = 'answer';
-                    btn.onclick = () => checkAnswer(option, q.correct, q, randomIndex);
-                    answersDiv.appendChild(btn);
-                });
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.className = 'answer';
+                btn.onclick = () => checkAnswer(option, q.correct, q, randomIndex);
+                answersDiv.appendChild(btn);
+            });
 
-                document.getElementById('result').textContent = '';
-            }
+            document.getElementById('result').textContent = '';
+        }
 
         function checkAnswer(selected, correct, q, indexInRemaining) {
-                const buttons = document.querySelectorAll('.answer');
-                buttons.forEach(btn => {
-                    if (btn.textContent === correct) btn.classList.add('correct');
-                    if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
-                    btn.disabled = true;
-                });
+            const buttons = document.querySelectorAll('.answer');
+            buttons.forEach(btn => {
+                if (btn.textContent === correct) btn.classList.add('correct');
+                if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
+                btn.disabled = true;
+            });
 
-                const result = document.getElementById('result');
-                if (selected === correct) {
-                    result.textContent = `Chính xác! ✅ Đây là ${q.exam}, ${q.point} điểm.`;
-                } else {
-                    result.textContent = `Sai ❌. Đáp án đúng là: ${correct}. Đây là ${q.exam}, ${q.point} điểm.`;
-                }
-
-                // Xoá câu hỏi đã làm khỏi remainingQuestions
-                remainingQuestions.splice(indexInRemaining, 1);
+            const result = document.getElementById('result');
+            if (selected === correct) {
+                result.textContent = `Chính xác! ✅ Đây là ${q.exam}, ${q.point} điểm.`;
+            } else {
+                result.textContent = `Sai ❌. Đáp án đúng là: ${correct}. Đây là ${q.exam}, ${q.point} điểm.`;
             }
+
+            // Xoá câu hỏi đã làm khỏi remainingQuestions
+            remainingQuestions.splice(indexInRemaining, 1);
+        }
 
         // Hiển thị câu đầu tiên
         showQuestion();
 
         // Nút câu tiếp theo
-        const nextBtn = document.createElement('button');
-        nextBtn.textContent = 'Câu tiếp theo';
-        nextBtn.onclick = () => {
-            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
-            showQuestion();
-        };
-        document.body.appendChild(nextBtn);
+        document.getElementById('next-btn').onclick = () => showQuestion();
     </script>
 
 </body>
