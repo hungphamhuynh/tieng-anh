@@ -1978,12 +1978,11 @@
             const result = document.getElementById('result');
             if (selected === correct) {
                 result.textContent = `Chính xác! ✅ Đây là ${q.exam}, ${q.point} điểm.`;
+                // Xoá câu hỏi đã làm khỏi remainingQuestions
+                remainingQuestions.splice(indexInRemaining, 1);
             } else {
                 result.textContent = `Sai ❌. Đáp án đúng là: ${correct}. Đây là ${q.exam}, ${q.point} điểm.`;
             }
-
-            // Xoá câu hỏi đã làm khỏi remainingQuestions
-            remainingQuestions.splice(indexInRemaining, 1);
         }
 
         // Hiển thị câu đầu tiên
